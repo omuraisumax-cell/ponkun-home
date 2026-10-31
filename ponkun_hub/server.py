@@ -30,7 +30,7 @@ from ponkun_hub.hub_streaming import HubStreamingError
 from ponkun_hub.hub_streaming_endpoint import stream_event_body
 from ponkun_hub.secure_credentials import read_strata_key
 HOST = os.environ.get("PONKUN_HUB_HOST", "127.0.0.1")
-PORT = int(os.environ.get("PONKUN_HUB_PORT", "8787"))
+PORT = int(os.environ.get("PONKUN_HUB_PORT", "8788"))
 HUB_CLIENT_TOKEN = os.environ.get("PONKUN_HUB_CLIENT_TOKEN", "").strip()
 MOBILE_HOST = os.environ.get("PONKUN_MOBILE_HOST", "127.0.0.1")
 MOBILE_PORT = int(os.environ.get("PONKUN_MOBILE_PORT", "8002"))
