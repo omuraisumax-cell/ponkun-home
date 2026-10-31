@@ -13,7 +13,7 @@ Do not include credentials, private logs, conversations, audio, database content
 
 ## Before every public release
 
-1. Run the public-release audit described in `docs/PUBLIC_RELEASE_AUDIT.md`.
+1. Run a secret scan over the working tree and the complete Git history (for example `gitleaks detect --config .gitleaks.toml`).
 2. Review tracked files, staged changes, and the complete Git history.
 3. Rotate any credential that may have entered a working tree, backup, log, report, or history.
 4. Confirm that public tests do not make live or paid network requests.
