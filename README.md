@@ -1,6 +1,21 @@
 # Ponkun Home
 
-Ponkun Home is a local-first personal assistant stack for Windows. It combines a PC voice client, a mobile web client, a local Hub, local inference, and an optional Fish Audio Cloud proxy.
+## One Mind, Every Device.
+
+**Ponkun Home is built around a simple idea: one AI identity, accessible from every device.**
+
+Your PC, smartphone, and Stack-chan are not separate assistants. They are different interfaces to the same Ponkun.
+
+The goal is to maintain a consistent personality, shared long-term memory, and continuous conversational context across devices, while keeping the system local-first and under the user's control.
+
+- **One Mind:** A shared AI identity, memory, and reasoning architecture.
+- **Every Device:** Seamless interaction through PC, Mobile, and Stack-chan.
+- **Local First:** Prioritize local inference and user-controlled data storage.
+- **Model Independent:** Switch between local and cloud models without losing the assistant's identity.
+
+**The device may change. The mind stays the same.**
+
+*This is the architectural vision of Ponkun Home. Cross-device continuity and shared memory are being developed incrementally.*
 
 > Public-release status: **pre-release candidate**. Review the security and license notes before publishing.
 
