@@ -543,19 +543,34 @@ def home():
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <meta name="theme-color" content="#131314">
+    <meta name="theme-color" content="#111827">
     <title>ぽんくん AI</title>
+    <link rel="icon" href="/static/favicon.ico" type="image/x-icon">
+    <link rel="shortcut icon" href="/static/favicon.ico" type="image/x-icon">
+    <link rel="icon" type="image/png" sizes="192x192" href="/static/icon-192.png">
+    <link rel="apple-touch-icon" href="/static/icon-192.png">
     <link rel="manifest" href="/manifest.webmanifest">
     <style>
         :root {
-            --bg-color: #131314;
-            --sidebar-bg: #1e1f20;
-            --user-bubble: #282a2c;
-            --text-main: #e3e3e3;
-            --text-sub: #9e9e9e;
-            --accent: #4e8cff;
-            --accent-glow: rgba(78, 140, 255, 0.2);
-            --border: #333538;
+            --bg-color: #0b1220;
+            --bg-elevated: #111b2c;
+            --sidebar-bg: #121b2a;
+            --panel: rgba(31, 43, 63, 0.82);
+            --panel-strong: #202c40;
+            --user-bubble: #24334b;
+            --text-main: #f4f7fb;
+            --text-sub: #a9b5c8;
+            --text-muted: #71809a;
+            --accent: #4f8cff;
+            --accent-2: #8b5cf6;
+            --accent-glow: rgba(79, 140, 255, 0.24);
+            --success: #35d07f;
+            --border: rgba(154, 172, 201, 0.16);
+            --radius-sm: 12px;
+            --radius-md: 18px;
+            --radius-lg: 26px;
+            --shadow-soft: 0 16px 44px rgba(0, 0, 0, 0.24);
+            --safe-bottom: env(safe-area-inset-bottom, 0px);
         }
 
         * {
@@ -565,9 +580,15 @@ def home():
             -webkit-tap-highlight-color: transparent;
         }
 
+        html, body {
+            width: 100%;
+            max-width: 100%;
+            overflow-x: hidden;
+        }
+
         body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-            background: var(--bg-color);
+            font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans JP", sans-serif;
+            background: radial-gradient(circle at 70% 4%, rgba(55, 114, 220, 0.18), transparent 30%), var(--bg-color);
             color: var(--text-main);
             display: flex;
             height: 100dvh;
@@ -575,12 +596,13 @@ def home():
         }
 
         #sidebar {
-            width: 280px;
-            background: var(--sidebar-bg);
+            width: 304px;
+            flex: 0 0 304px;
+            background: linear-gradient(180deg, #151f30 0%, var(--sidebar-bg) 100%);
             border-right: 1px solid var(--border);
             display: flex;
             flex-direction: column;
-            padding: 18px;
+            padding: 22px 18px calc(18px + var(--safe-bottom));
             transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             z-index: 100;
         }
@@ -589,52 +611,77 @@ def home():
             display: flex;
             align-items: center;
             justify-content: space-between;
-            margin-bottom: 24px;
+            margin-bottom: 20px;
         }
 
         .brand-title {
-            font-size: 1.1rem;
-            font-weight: 700;
+            font-size: 1.08rem;
+            font-weight: 760;
             letter-spacing: 0.5px;
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 10px;
         }
+
+        .brand-mark {
+            width: 42px;
+            height: 42px;
+            border-radius: 14px;
+            display: grid;
+            place-items: center;
+            background: linear-gradient(145deg, #53c9ff, #4f7cff 58%, #9b64f6);
+            box-shadow: 0 10px 28px rgba(63, 125, 255, 0.35);
+            font-size: 1.25rem;
+        }
+
+        .brand-avatar,
+        .welcome-avatar {
+            width: 100%;
+            height: 100%;
+            display: block;
+            object-fit: cover;
+            border-radius: inherit;
+        }
+
+        .brand-copy { display: flex; flex-direction: column; gap: 2px; }
+        .brand-line { display: flex; align-items: center; gap: 8px; }
+        .brand-subtitle { color: var(--text-muted); font-size: 0.7rem; font-weight: 500; }
 
         .brand-badge {
             font-size: 0.7rem;
-            background: var(--accent);
+            background: linear-gradient(135deg, var(--accent), #6c72ff);
             color: white;
             padding: 2px 6px;
-            border-radius: 6px;
+            border-radius: 999px;
             font-weight: bold;
         }
 
         .new-chat-btn {
-            background: transparent;
-            border: 1px dashed var(--border);
+            background: linear-gradient(135deg, rgba(50, 164, 255, 0.95), rgba(77, 93, 230, 0.95));
+            border: 1px solid rgba(126, 205, 255, 0.48);
             color: var(--text-main);
-            padding: 10px;
-            border-radius: 10px;
+            padding: 13px 15px;
+            border-radius: 15px;
             cursor: pointer;
             width: 100%;
             text-align: left;
-            margin-bottom: 20px;
-            font-size: 0.9rem;
+            margin-bottom: 18px;
+            font-size: 0.92rem;
+            font-weight: 650;
+            box-shadow: 0 10px 25px rgba(46, 108, 232, 0.26);
             transition: all 0.2s ease;
         }
 
         .new-chat-btn:hover {
-            border-color: var(--accent);
-            background: var(--user-bubble);
+            transform: translateY(-1px);
+            filter: brightness(1.08);
         }
 
         .section-label {
             font-size: 0.75rem;
             color: var(--text-sub);
-            text-transform: uppercase;
-            letter-spacing: 0.8px;
-            margin: 10px 0 8px 4px;
+            letter-spacing: 0.04em;
+            margin: 12px 0 9px 4px;
         }
 
         .history-list {
@@ -643,88 +690,177 @@ def home():
             list-style: none;
             display: flex;
             flex-direction: column;
-            gap: 6px;
+            gap: 7px;
         }
 
         .history-item {
-            padding: 8px 10px;
-            border-radius: 8px;
-            font-size: 0.85rem;
-            color: var(--text-sub);
+            position: relative;
+            padding: 11px 34px 11px 38px;
+            border-radius: 13px;
+            font-size: 0.86rem;
+            color: #c6d0df;
             cursor: pointer;
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
         }
 
+        .history-item::before {
+            content: "";
+            position: absolute;
+            left: 13px;
+            top: 50%;
+            width: 13px;
+            height: 10px;
+            transform: translateY(-50%);
+            border: 1.5px solid var(--text-muted);
+            border-radius: 5px;
+        }
+
+        .history-item::after {
+            content: "›";
+            position: absolute;
+            right: 13px;
+            color: var(--text-muted);
+        }
+
         .history-item:hover {
-            background: var(--user-bubble);
+            background: rgba(255, 255, 255, 0.055);
             color: var(--text-main);
         }
 
         .status-box {
-            font-size: 0.75rem;
-            color: var(--text-sub);
-            border-top: 1px solid var(--border);
-            padding-top: 12px;
+            font-size: 0.78rem;
+            color: #c8d3e3;
+            background: rgba(255, 255, 255, 0.045);
+            border: 1px solid var(--border);
+            padding: 12px 13px;
+            border-radius: 15px;
             display: flex;
             align-items: center;
             gap: 8px;
         }
 
         .status-dot {
-            width: 8px;
-            height: 8px;
-            background: #22c55e;
+            width: 9px;
+            height: 9px;
+            background: var(--success);
             border-radius: 50%;
-            box-shadow: 0 0 6px #22c55e;
+            box-shadow: 0 0 0 5px rgba(53, 208, 127, 0.11), 0 0 10px rgba(53, 208, 127, 0.65);
         }
+
+        .status-copy { display: flex; flex-direction: column; gap: 2px; }
+        .status-copy small { color: var(--text-muted); font-size: 0.67rem; }
 
         #main-wrapper {
             flex: 1;
+            width: 100%;
+            max-width: 100%;
             display: flex;
             flex-direction: column;
             position: relative;
-            background: var(--bg-color);
+            background: radial-gradient(circle at 50% 0%, rgba(43, 102, 190, 0.16), transparent 34%), var(--bg-color);
             min-width: 0;
         }
 
         .app-bar {
             display: flex;
             align-items: center;
-            padding: 12px 16px;
+            min-height: 64px;
+            padding: 10px 18px;
             border-bottom: 1px solid var(--border);
+            justify-content: space-between;
             gap: 12px;
+            background: rgba(11, 18, 32, 0.76);
+            backdrop-filter: blur(18px);
+            -webkit-backdrop-filter: blur(18px);
+            z-index: 10;
         }
 
         .menu-trigger {
-            background: none;
-            border: none;
+            background: rgba(255, 255, 255, 0.055);
+            border: 1px solid var(--border);
             color: var(--text-main);
-            font-size: 1.3rem;
+            font-size: 1.12rem;
             cursor: pointer;
-            padding: 4px;
+            width: 40px;
+            height: 40px;
+            border-radius: 13px;
         }
 
         .current-model-info {
-            font-size: 0.85rem;
-            color: var(--text-sub);
+            font-size: 1rem;
+            color: var(--text-main);
+            font-weight: 740;
+            letter-spacing: 0.01em;
         }
+
+        .app-brand { display: flex; align-items: center; gap: 9px; }
+        .app-brand .brand-badge { font-size: 0.62rem; }
+        .header-status { display: flex; align-items: center; gap: 7px; color: var(--text-sub); font-size: 0.72rem; }
+        .header-status .status-dot { width: 7px; height: 7px; box-shadow: 0 0 8px rgba(53, 208, 127, 0.65); }
 
         #chat-scroller {
             flex: 1;
             overflow-y: auto;
-            padding: 20px 16px;
+            padding: 24px 18px 12px;
             display: flex;
             flex-direction: column;
             gap: 18px;
+            scroll-padding-bottom: 130px;
         }
+
+        .welcome-panel {
+            width: min(100%, 720px);
+            margin: auto;
+            padding: 4vh 0 12px;
+            text-align: center;
+        }
+
+        .welcome-orb {
+            width: 92px;
+            height: 92px;
+            margin: 0 auto 20px;
+            display: grid;
+            place-items: center;
+            border-radius: 30px;
+            background: radial-gradient(circle at 38% 30%, #dff9ff 0 12%, #6edcff 28%, #4e72ff 62%, #7555d9 100%);
+            box-shadow: 0 20px 58px rgba(64, 127, 255, 0.38), inset 0 1px 10px rgba(255, 255, 255, 0.55);
+            font-size: 2.8rem;
+            transform: rotate(-3deg);
+            overflow: hidden;
+        }
+
+        .welcome-panel h1 { font-size: clamp(1.65rem, 6vw, 2.3rem); letter-spacing: -0.035em; margin-bottom: 7px; }
+        .welcome-panel > p { color: #a9bce0; font-size: clamp(0.98rem, 3.8vw, 1.12rem); line-height: 1.55; }
+        .suggestion-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; margin-top: 28px; text-align: left; }
+        .suggestion-card {
+            border: 1px solid var(--border);
+            border-radius: var(--radius-md);
+            padding: 15px;
+            min-height: 86px;
+            color: var(--text-main);
+            background: linear-gradient(145deg, rgba(39, 55, 82, 0.9), rgba(27, 39, 59, 0.88));
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            cursor: pointer;
+            text-align: left;
+            font: inherit;
+            line-height: 1.45;
+            box-shadow: 0 12px 28px rgba(0, 0, 0, 0.15);
+        }
+        .suggestion-card:active { transform: scale(0.985); }
+        .suggestion-icon { flex: 0 0 auto; width: 38px; height: 38px; border-radius: 13px; display: grid; place-items: center; background: rgba(79, 140, 255, 0.15); color: #83b8ff; font-size: 1.15rem; }
+        .suggestion-card:nth-child(2) .suggestion-icon { color: #c99aff; background: rgba(139, 92, 246, 0.15); }
+        .suggestion-card:nth-child(3) .suggestion-icon { color: #72dc8f; background: rgba(53, 208, 127, 0.14); }
+        .suggestion-card:nth-child(4) .suggestion-icon { color: #ffbc64; background: rgba(245, 158, 11, 0.14); }
 
         .message-row {
             display: flex;
             width: 100%;
             max-width: 760px;
-            margin: auto;
+            margin: 0 auto;
             flex-direction: column;
         }
 
@@ -737,7 +873,7 @@ def home():
         }
 
         .bubble {
-            padding: 12px 18px;
+            padding: 12px 16px;
             border-radius: 18px;
             font-size: 0.95rem;
             line-height: 1.6;
@@ -748,14 +884,15 @@ def home():
         }
 
         .user .bubble {
-            background: var(--user-bubble);
+            background: linear-gradient(145deg, #263750, #223047);
             border: 1px solid var(--border);
             border-bottom-right-radius: 4px;
         }
 
         .ponkun .bubble {
-            background: transparent;
-            padding-left: 0;
+            background: rgba(28, 42, 63, 0.72);
+            border: 1px solid var(--border);
+            border-bottom-left-radius: 6px;
         }
 
         .meta-line {
@@ -797,26 +934,28 @@ def home():
         }
 
         .input-container {
-            padding: 12px 16px 20px;
+            padding: 10px 16px calc(14px + var(--safe-bottom));
             max-width: 760px;
             width: 100%;
-            margin: auto;
+            margin: 0 auto;
+            background: linear-gradient(180deg, rgba(11, 18, 32, 0), rgba(11, 18, 32, 0.96) 24%);
         }
 
         .input-card {
             display: flex;
-            align-items: center;
-            background: var(--sidebar-bg);
+            align-items: flex-end;
+            background: rgba(32, 44, 64, 0.94);
             border: 1px solid var(--border);
-            border-radius: 28px;
-            padding: 4px 8px 4px 16px;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+            border-radius: 25px;
+            padding: 7px 8px 7px 15px;
+            box-shadow: var(--shadow-soft), inset 0 1px 0 rgba(255, 255, 255, 0.035);
+            backdrop-filter: blur(18px);
             transition: border-color 0.2s ease, box-shadow 0.2s ease;
         }
 
         .input-card:focus-within {
             border-color: var(--accent);
-            box-shadow: 0 4px 20px var(--accent-glow);
+            box-shadow: 0 10px 35px var(--accent-glow);
         }
 
         #message {
@@ -824,33 +963,38 @@ def home():
            background: transparent;
            border: none;
            color: var(--text-main);
-           font-size: 1rem;
+           font-size: 0.98rem;
            outline: none;
            padding: 10px 0;
            resize: none;
-           overflow-y: auto;
+           overflow-y: hidden;
+           scrollbar-width: none;
+           -ms-overflow-style: none;
            min-height: 42px;
            max-height: 160px;
            line-height: 1.5;
            font-family: inherit;
         }
 
+        #message::-webkit-scrollbar { display: none; }
+
         #message::placeholder {
-            color: #666;
+            color: #7f8ca2;
         }
 
         .btn-icon {
-            background: transparent;
-            border: none;
+            background: rgba(255, 255, 255, 0.07);
+            border: 1px solid rgba(255, 255, 255, 0.025);
             color: var(--text-sub);
-            width: 38px;
-            height: 38px;
+            width: 40px;
+            height: 40px;
             border-radius: 50%;
             cursor: pointer;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 1.1rem;
+            font-size: 1.02rem;
+            flex: 0 0 auto;
             transition: all 0.2s ease;
         }
 
@@ -860,10 +1004,49 @@ def home():
         }
 
         .btn-submit {
-            color: var(--accent);
+            color: white;
+            background: linear-gradient(135deg, #4f9cff, #5268f5);
+            box-shadow: 0 8px 18px rgba(64, 116, 255, 0.34);
         }
 
+        .image-preview-card { display: none; align-items: center; gap: 10px; margin-bottom: 8px; background: var(--panel-strong); padding: 9px 11px; border-radius: 15px; border: 1px solid var(--border); box-shadow: var(--shadow-soft); }
+        .image-preview-card img { width: 46px; height: 46px; border-radius: 10px; object-fit: cover; }
+        .image-preview-name { font-size: 0.8rem; color: var(--text-sub); flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        .vision-destination { font-size: 0.69rem; color: var(--text-muted); max-width: 180px; overflow-wrap: anywhere; }
+        .preview-cancel { background: rgba(255, 92, 117, 0.12); border: none; color: #ff8094; cursor: pointer; width: 34px; height: 34px; border-radius: 50%; font-size: 0.95rem; }
+
+        .appearance-button { border: 1px solid var(--border); background: rgba(255, 255, 255, 0.055); color: var(--text-sub); border-radius: 12px; min-height: 38px; padding: 0 12px; cursor: pointer; font: inherit; font-size: 0.78rem; }
+        .appearance-modal { position: fixed; inset: 0; z-index: 200; display: none; place-items: center; padding: 18px; background: rgba(3, 8, 18, 0.72); backdrop-filter: blur(12px); }
+        .appearance-modal.open { display: grid; }
+        .appearance-dialog { width: min(100%, 440px); max-height: min(88vh, 680px); overflow-y: auto; border: 1px solid var(--border); border-radius: 24px; padding: 20px; background: var(--panel-strong); box-shadow: 0 24px 70px rgba(0, 0, 0, 0.45); }
+        .appearance-heading { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+        .appearance-heading h2 { font-size: 1.08rem; }
+        .appearance-close { border: 0; background: rgba(255,255,255,0.07); color: var(--text-main); width: 36px; height: 36px; border-radius: 50%; cursor: pointer; }
+        .avatar-preview { width: 104px; height: 104px; object-fit: cover; display: block; margin: 18px auto; border-radius: 30px; box-shadow: 0 16px 42px var(--accent-glow); }
+        .preset-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+        .preset-button { border: 2px solid transparent; background: rgba(255,255,255,0.05); border-radius: 16px; padding: 7px; cursor: pointer; }
+        .preset-button.selected { border-color: var(--accent); }
+        .preset-button img { width: 100%; aspect-ratio: 1; object-fit: cover; border-radius: 11px; display: block; }
+        .appearance-actions { display: flex; flex-wrap: wrap; gap: 9px; margin-top: 16px; }
+        .appearance-action { flex: 1 1 120px; min-height: 42px; border-radius: 13px; border: 1px solid var(--border); background: rgba(255,255,255,0.07); color: var(--text-main); cursor: pointer; font: inherit; }
+        .appearance-help { color: var(--text-muted); font-size: 0.75rem; line-height: 1.5; margin-top: 12px; }
+
         @media (max-width: 768px) {
+            body {
+                display: block;
+                width: 100vw;
+                max-width: 100vw;
+                overflow: hidden;
+            }
+
+            #main-wrapper {
+                width: 100vw;
+                max-width: 100vw;
+                height: 100dvh;
+                min-width: 0;
+                overflow: hidden;
+            }
+
             .message-row {
                 max-width: 100%;
                 min-width: 0;
@@ -878,82 +1061,128 @@ def home():
             }
 
             #sidebar {
-                position: absolute;
+                position: fixed;
                 top: 0;
                 bottom: 0;
                 left: 0;
                 transform: translateX(-100%);
-                box-shadow: 4px 0 16px rgba(0, 0, 0, 0.5);
+                width: min(88vw, 330px);
+                max-width: calc(100vw - 44px);
+                height: 100dvh;
+                visibility: hidden;
+                pointer-events: none;
+                box-shadow: 18px 0 48px rgba(0, 0, 0, 0.42);
             }
 
             #sidebar.open {
                 transform: translateX(0);
+                visibility: visible;
+                pointer-events: auto;
             }
 
             .sidebar-backdrop {
-                position: absolute;
+                position: fixed;
                 inset: 0;
-                background: rgba(0, 0, 0, 0.6);
+                background: rgba(2, 7, 16, 0.68);
+                backdrop-filter: blur(3px);
                 z-index: 90;
-                display: none;
+                display: block;
+                opacity: 0;
+                visibility: hidden;
+                pointer-events: none;
+                transition: opacity 0.25s ease, visibility 0.25s ease;
             }
 
             .sidebar-backdrop.active {
-                display: block;
+                opacity: 1;
+                visibility: visible;
+                pointer-events: auto;
             }
+
+            .app-bar { min-height: 58px; padding: 8px 12px; }
+            .header-status span:last-child { display: none; }
+            #chat-scroller { width: 100%; min-width: 0; overflow-x: hidden; padding: 16px 14px 8px; }
+            .welcome-panel { padding-top: min(7vh, 54px); }
+            .suggestion-grid { width: 100%; min-width: 0; }
+            .suggestion-card { min-width: 0; }
+            .input-container { width: 100%; max-width: 100vw; min-width: 0; padding-left: 10px; padding-right: 10px; }
+            .input-card { width: 100%; min-width: 0; padding-left: 13px; gap: 3px; }
+            #message { min-width: 0; width: 100%; }
+            .btn-icon { width: 39px; height: 39px; }
+            .vision-destination { display: none; }
+        }
+
+        @media (max-width: 390px) {
+            .suggestion-grid { grid-template-columns: 1fr; }
+            .suggestion-card { min-height: 68px; }
+            .welcome-orb { width: 78px; height: 78px; font-size: 2.25rem; margin-bottom: 16px; }
+            .btn-icon { width: 37px; height: 37px; }
         }
     </style>
 </head>
 <body>
 
-<div id="backdrop" class="sidebar-backdrop" onclick="toggleSidebar()"></div>
+<div id="backdrop" class="sidebar-backdrop" onclick="closeSidebar()" aria-hidden="true"></div>
 
 <aside id="sidebar">
     <div class="sidebar-header">
         <div class="brand-title">
-            <span>🐾 ぽんくん</span>
-            <span class="brand-badge">PRO</span>
+            <span class="brand-mark" aria-hidden="true"><img id="brandAvatar" class="brand-avatar" alt=""></span>
+            <span class="brand-copy">
+                <span class="brand-line">ぽんくん <span class="brand-badge">PRO</span></span>
+                <span class="brand-subtitle">あなたの毎日に、AIのやさしい相棒</span>
+            </span>
         </div>
+        <button class="appearance-button" type="button" onclick="openAppearanceModal()" aria-label="アバター変更">見た目設定</button>
     </div>
 
     <button class="new-chat-btn" onclick="clearChat()">＋ 新しいチャット</button>
 
-    <div class="section-label">Recent Queries</div>
+    <div class="section-label">最近のチャット</div>
     <ul id="historyList" class="history-list">
         <li class="history-item">おかえりなさい</li>
     </ul>
 
     <div class="status-box">
         <span class="status-dot"></span>
-        <span>Ponkun Core Online</span>
+        <span class="status-copy"><strong>Ponkun Core Online</strong><small>いつでもお話しできます</small></span>
     </div>
 </aside>
 
 <main id="main-wrapper">
     <header class="app-bar">
-        <button class="menu-trigger" onclick="toggleSidebar()">☰</button>
-        <div class="current-model-info">Ponkun Mobile Client</div>
+        <button id="menuTrigger" class="menu-trigger" type="button" onclick="toggleSidebar()" aria-label="メニューを開く" aria-controls="sidebar" aria-expanded="false">☰</button>
+        <div class="app-brand"><div class="current-model-info">ぽんくん</div><span class="brand-badge">PRO</span></div>
+        <div class="header-status"><span class="status-dot"></span><span>オンライン</span></div>
     </header>
 
     <div id="chat-scroller">
-        <div class="message-row ponkun">
-            <div class="bubble">おかえりなさい。何か用事ですか？</div>
-        </div>
+        <section id="welcomePanel" class="welcome-panel" aria-labelledby="welcomeTitle">
+            <div class="welcome-orb" aria-hidden="true"><img id="welcomeAvatar" class="welcome-avatar" alt=""></div>
+            <h1 id="welcomeTitle">おかえりなさい。</h1>
+            <p>今日は、何を一緒に進めましょう？</p>
+            <div class="suggestion-grid">
+                <button class="suggestion-card" type="button" onclick="useSuggestion('調べものを手伝って')"><span class="suggestion-icon">⌕</span><span>調べものを<br>手伝ってほしい</span></button>
+                <button class="suggestion-card" type="button" onclick="useSuggestion('文章を書くのを手伝って')"><span class="suggestion-icon">✎</span><span>文章を書くのを<br>手伝ってほしい</span></button>
+                <button class="suggestion-card" type="button" onclick="document.getElementById('imageFile').click()"><span class="suggestion-icon">▧</span><span>画像について<br>相談したい</span></button>
+                <button class="suggestion-card" type="button" onclick="useSuggestion('プログラミングについて質問したい')"><span class="suggestion-icon">&lt;/&gt;</span><span>プログラミングを<br>相談したい</span></button>
+            </div>
+        </section>
     </div>
 
     <footer class="input-container">
-        <div id="imagePreviewContainer" style="display:none; align-items:center; gap:8px; margin-bottom:8px; background: var(--sidebar-bg); padding:8px 12px; border-radius:12px; border:1px solid var(--border);">
-            <img id="imagePreview" src="" alt="preview" style="width:44px; height:44px; border-radius:6px; object-fit:cover;">
-            <span id="imageName" style="font-size:0.8rem; color:var(--text-sub); flex:1; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;"></span>
-            <span id="visionDestination" style="font-size:0.72rem; color:var(--text-sub); max-width:180px; overflow-wrap:anywhere;">送信先：OpenAI（外部API）・送信時に確認</span>
-            <button type="button" onclick="cancelImage()" style="background:none; border:none; color:#ff5555; cursor:pointer; font-size:1.1rem; padding:4px;">✕</button>
+        <div id="imagePreviewContainer" class="image-preview-card">
+            <img id="imagePreview" src="" alt="選択した画像のプレビュー">
+            <span id="imageName" class="image-preview-name"></span>
+            <span id="visionDestination" class="vision-destination">送信先：OpenAI（外部API）・送信時に確認</span>
+            <button class="preview-cancel" type="button" onclick="cancelImage()" aria-label="画像を取り消す">✕</button>
         </div>
 
         <div class="input-card">
-            <textarea id="message" placeholder="ぽんくんにプロンプトを入力..." rows="1"></textarea>   
-            <button class="btn-icon" type="button" onclick="document.getElementById('cameraFile').click()" title="カメラで撮影">📷</button>
-            <button class="btn-icon" type="button" onclick="document.getElementById('voiceFile').click()" title="音声入力">🎤</button>
-            <button class="btn-icon btn-submit" type="button" onclick="sendMessage()">➤</button>
+            <textarea id="message" placeholder="ぽんくんにメッセージを送る..." aria-label="メッセージ" rows="1"></textarea>
+            <button class="btn-icon" type="button" onclick="document.getElementById('cameraFile').click()" title="カメラで撮影" aria-label="カメラで撮影">⌾</button>
+            <button class="btn-icon" type="button" onclick="document.getElementById('voiceFile').click()" title="音声入力" aria-label="音声入力">♪</button>
+            <button class="btn-icon btn-submit" type="button" onclick="sendMessage()" title="送信" aria-label="送信">➤</button>
         </div>
 
         <input id="cameraFile" type="file" accept="image/*" capture="environment" style="display:none">
@@ -961,8 +1190,115 @@ def home():
     </footer>
 </main>
 
+<div id="appearanceModal" class="appearance-modal" role="dialog" aria-modal="true" aria-labelledby="appearanceTitle" onclick="closeAppearanceModal(event)">
+    <div class="appearance-dialog">
+        <div class="appearance-heading">
+            <h2 id="appearanceTitle">アバター変更</h2>
+            <button class="appearance-close" type="button" onclick="closeAppearanceModal()" aria-label="閉じる">✕</button>
+        </div>
+        <img id="avatarPreview" class="avatar-preview" alt="選択中のアバター">
+        <div id="avatarPresets" class="preset-grid" aria-label="プリセット画像"></div>
+        <div class="appearance-actions">
+            <button class="appearance-action" type="button" onclick="document.getElementById('avatarFile').click()">画像を選ぶ</button>
+            <button class="appearance-action" type="button" onclick="resetAvatar()">既定に戻す</button>
+        </div>
+        <input id="avatarFile" type="file" accept="image/png,image/jpeg,image/webp" hidden>
+        <p class="appearance-help">画像はこの端末のブラウザ内に保存され、サーバーへ送信されません。</p>
+    </div>
+</div>
+
 <script>
-let selectedImageFile = null; const savedImageInput = document.createElement("input"); savedImageInput.type = "file"; savedImageInput.accept = "image/png,image/jpeg,image/webp"; savedImageInput.style.display = "none"; savedImageInput.id = "imageFile"; document.body.appendChild(savedImageInput); const savedImageButton = document.createElement("button"); savedImageButton.type = "button"; savedImageButton.className = "btn-icon"; savedImageButton.title = "保存済み画像を選択"; savedImageButton.textContent = "🖼️"; savedImageButton.onclick = () => savedImageInput.click(); document.querySelector(".input-card").insertBefore(savedImageButton, document.querySelector(".btn-submit")); function selectSavedImage(file) { if (!file) return; selectedImageFile = file; const reader = new FileReader(); reader.onload = function(e) { document.getElementById("imagePreview").src = e.target.result; document.getElementById("imageName").textContent = file.name || "保存済み画像"; document.getElementById("imagePreviewContainer").style.display = "flex"; }; reader.readAsDataURL(file); } savedImageInput.addEventListener("change", function() { selectSavedImage(this.files[0]); });
+    const AVATAR_STORAGE_KEY = "ponkun_mobile_avatar_v1";
+    const avatarPresets = [
+        { id: "ponkun", colors: ["#6edcff", "#4e72ff"], face: "ぽ" },
+        { id: "moon", colors: ["#9f7aea", "#4f46e5"], face: "☾" },
+        { id: "spark", colors: ["#45d6b5", "#2789d8"], face: "✦" }
+    ];
+
+    function avatarSvgData(preset) {
+        const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128"><defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop stop-color="${preset.colors[0]}"/><stop offset="1" stop-color="${preset.colors[1]}"/></linearGradient></defs><rect width="128" height="128" rx="32" fill="url(#g)"/><circle cx="64" cy="64" r="43" fill="#081426" fill-opacity=".88"/><text x="64" y="78" text-anchor="middle" font-size="48" font-family="sans-serif" font-weight="700" fill="white">${preset.face}</text></svg>`;
+        return "data:image/svg+xml;charset=utf-8," + encodeURIComponent(svg);
+    }
+
+    const DEFAULT_AVATAR = avatarSvgData(avatarPresets[0]);
+
+    function getStoredAvatar() {
+        try { return localStorage.getItem(AVATAR_STORAGE_KEY) || DEFAULT_AVATAR; }
+        catch (_error) { return DEFAULT_AVATAR; }
+    }
+
+    function applyAvatar(imageUrl) {
+        const safeUrl = imageUrl || DEFAULT_AVATAR;
+        for (const id of ["brandAvatar", "welcomeAvatar", "avatarPreview"]) {
+            const image = document.getElementById(id);
+            if (image) image.src = safeUrl;
+        }
+        document.querySelectorAll(".preset-button").forEach(button => {
+            button.classList.toggle("selected", button.dataset.avatar === safeUrl);
+        });
+    }
+
+    function saveAvatar(imageUrl) {
+        try { localStorage.setItem(AVATAR_STORAGE_KEY, imageUrl); }
+        catch (_error) {
+            window.alert("画像を保存できませんでした。より小さい画像を選んでください。");
+            return;
+        }
+        applyAvatar(imageUrl);
+    }
+
+    function renderAvatarPresets() {
+        const container = document.getElementById("avatarPresets");
+        for (const preset of avatarPresets) {
+            const imageUrl = avatarSvgData(preset);
+            const button = document.createElement("button");
+            button.type = "button";
+            button.className = "preset-button";
+            button.dataset.avatar = imageUrl;
+            button.setAttribute("aria-label", `プリセット ${preset.id}`);
+            const image = document.createElement("img");
+            image.src = imageUrl;
+            image.alt = "";
+            button.appendChild(image);
+            button.addEventListener("click", () => saveAvatar(imageUrl));
+            container.appendChild(button);
+        }
+    }
+
+    function openAppearanceModal() {
+        applyAvatar(getStoredAvatar());
+        document.getElementById("appearanceModal").classList.add("open");
+        document.body.style.overflow = "hidden";
+    }
+
+    function closeAppearanceModal(event) {
+        if (event && event.target !== event.currentTarget) return;
+        document.getElementById("appearanceModal").classList.remove("open");
+        document.body.style.overflow = "";
+    }
+
+    function resetAvatar() {
+        try { localStorage.removeItem(AVATAR_STORAGE_KEY); } catch (_error) {}
+        applyAvatar(DEFAULT_AVATAR);
+    }
+
+    renderAvatarPresets();
+    applyAvatar(getStoredAvatar());
+    document.getElementById("avatarFile").addEventListener("change", function() {
+        const file = this.files && this.files[0];
+        if (!file) return;
+        if (!/^image\/(png|jpeg|webp)$/.test(file.type) || file.size > 2 * 1024 * 1024) {
+            window.alert("PNG、JPEG、WebP形式で2MB以下の画像を選んでください。");
+            this.value = "";
+            return;
+        }
+        const reader = new FileReader();
+        reader.onload = () => saveAvatar(String(reader.result || ""));
+        reader.readAsDataURL(file);
+        this.value = "";
+    });
+
+let selectedImageFile = null; const savedImageInput = document.createElement("input"); savedImageInput.type = "file"; savedImageInput.accept = "image/png,image/jpeg,image/webp"; savedImageInput.style.display = "none"; savedImageInput.id = "imageFile"; document.body.appendChild(savedImageInput); const savedImageButton = document.createElement("button"); savedImageButton.type = "button"; savedImageButton.className = "btn-icon"; savedImageButton.title = "保存済み画像を選択"; savedImageButton.setAttribute("aria-label", "保存済み画像を選択"); savedImageButton.textContent = "▧"; savedImageButton.onclick = () => savedImageInput.click(); document.querySelector(".input-card").insertBefore(savedImageButton, document.querySelector(".btn-submit")); function selectSavedImage(file) { if (!file) return; selectedImageFile = file; const reader = new FileReader(); reader.onload = function(e) { document.getElementById("imagePreview").src = e.target.result; document.getElementById("imageName").textContent = file.name || "保存済み画像"; document.getElementById("imagePreviewContainer").style.display = "flex"; }; reader.readAsDataURL(file); } savedImageInput.addEventListener("change", function() { selectSavedImage(this.files[0]); });
     let mobileAuthTokenInMemory = null;
 
     async function authenticatedFetch(url, options = {}) {
@@ -993,11 +1329,24 @@ let selectedImageFile = null; const savedImageInput = document.createElement("in
     }
     let currentSessionId = "mobile-main";
 
-    function toggleSidebar() {
+    function setSidebarOpen(open) {
         const sidebar = document.getElementById("sidebar");
         const backdrop = document.getElementById("backdrop");
-        sidebar.classList.toggle("open");
-        backdrop.classList.toggle("active");
+        const menuTrigger = document.getElementById("menuTrigger");
+        const shouldOpen = Boolean(open) && window.matchMedia("(max-width: 768px)").matches;
+        sidebar.classList.toggle("open", shouldOpen);
+        backdrop.classList.toggle("active", shouldOpen);
+        backdrop.setAttribute("aria-hidden", String(!shouldOpen));
+        menuTrigger.setAttribute("aria-expanded", String(shouldOpen));
+    }
+
+    function toggleSidebar() {
+        const sidebar = document.getElementById("sidebar");
+        setSidebarOpen(!sidebar.classList.contains("open"));
+    }
+
+    function closeSidebar() {
+        setSidebarOpen(false);
     }
 
     function prepareSources(sources) {
@@ -1042,8 +1391,17 @@ let selectedImageFile = null; const savedImageInput = document.createElement("in
         return selected;
     }
 
+    function useSuggestion(text) {
+        const input = document.getElementById("message");
+        input.value = text;
+        input.focus();
+        input.dispatchEvent(new Event("input"));
+    }
+
     function appendMessage(role, text, route = null, sources = [], modelName = null) {
         const scroller = document.getElementById("chat-scroller");
+        const welcomePanel = document.getElementById("welcomePanel");
+        if (welcomePanel) welcomePanel.remove();
         const row = document.createElement("div");
         row.className = `message-row ${role}`;
 
@@ -1090,10 +1448,7 @@ let selectedImageFile = null; const savedImageInput = document.createElement("in
         scroller.innerHTML = "";
         appendMessage("ponkun", "新しいチャットを開始しました。何について話しますか？");
 
-        if (window.innerWidth <= 768) {
-            document.getElementById("sidebar").classList.remove("open");
-            document.getElementById("backdrop").classList.remove("active");
-        }
+        closeSidebar();
     }
 
     function appendImageMessage(role, text, imageUrl) {
@@ -1225,6 +1580,7 @@ let selectedImageFile = null; const savedImageInput = document.createElement("in
 
         appendMessage("user", text);
         input.value = "";
+        input.dispatchEvent(new Event("input"));
 
         try {
             const res = await authenticatedFetch("/chat", {
@@ -1252,10 +1608,14 @@ let selectedImageFile = null; const savedImageInput = document.createElement("in
     }
 
     const messageInput = document.getElementById("message");
-    messageInput.addEventListener("input", function() {
-        this.style.height = "auto";
-        this.style.height = Math.min(this.scrollHeight, 160) + "px";
-    });
+    function resizeMessageInput() {
+        messageInput.style.height = "auto";
+        const nextHeight = Math.min(messageInput.scrollHeight, 160);
+        messageInput.style.height = nextHeight + "px";
+        messageInput.style.overflowY = messageInput.scrollHeight > 160 ? "auto" : "hidden";
+    }
+    messageInput.addEventListener("input", resizeMessageInput);
+    resizeMessageInput();
 
     messageInput.addEventListener("keydown", (e) => {
         const isMobile = window.matchMedia("(pointer: coarse)").matches;
@@ -1341,15 +1701,17 @@ let selectedImageFile = null; const savedImageInput = document.createElement("in
             }
             scroller.scrollTop = scroller.scrollHeight;
 
-            if (window.innerWidth <= 768) {
-                document.getElementById("sidebar").classList.remove("open");
-                document.getElementById("backdrop").classList.remove("active");
-            }
+            closeSidebar();
         } catch (err) {
             console.error("履歴取得エラー:", err);
         }
     }
 
+    setSidebarOpen(false);
+    window.addEventListener("resize", () => setSidebarOpen(false));
+    document.addEventListener("keydown", (event) => {
+        if (event.key === "Escape") closeSidebar();
+    });
     loadSessions();
     if ("serviceWorker" in navigator) {
         window.addEventListener("load", () => {
