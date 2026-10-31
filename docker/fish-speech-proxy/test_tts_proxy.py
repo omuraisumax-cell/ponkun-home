@@ -8,6 +8,8 @@ from unittest import mock
 
 
 MODULE_PATH = Path(__file__).with_name("tts_proxy.py")
+HAS_FASTAPI = importlib.util.find_spec("fastapi") is not None
+HAS_HTTPX = importlib.util.find_spec("httpx") is not None
 
 
 def load_without_creating_app():
@@ -78,6 +80,7 @@ class SecureProxyTests(unittest.TestCase):
         self.assertNotIn("api-key", source.casefold())
         self.assertIn('"Bearer " + api_key', source)
 
+    @unittest.skipUnless(HAS_FASTAPI, "fastapi is not installed (pip install -r requirements.secure.txt)")
     def test_openai_compatible_fields_are_required_nonempty_strings(self):
         app = self.module["create_app"](
             secret_reader=lambda _path: "x" * 20,
@@ -98,6 +101,7 @@ class SecureProxyTests(unittest.TestCase):
         self.assertIn('"detail": "local_request_validation_failed"', source)
         self.assertNotIn("_exc.errors()", source)
 
+    @unittest.skipUnless(HAS_FASTAPI and HAS_HTTPX, "fastapi and httpx are required for TestClient")
     def test_valid_input_reaches_upstream_without_local_422(self):
         from fastapi.testclient import TestClient
 
