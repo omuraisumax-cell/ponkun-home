@@ -1,0 +1,34 @@
+name: ponkun-fish-proxy-production
+
+services:
+  fish-cloud-proxy-production:
+    build:
+      context: .
+      dockerfile: Dockerfile.secure
+      no_cache: true
+    image: ponkun-fish-cloud-proxy:secure-production
+    container_name: ponkun-fish-cloud-proxy-production
+    ports:
+      - "127.0.0.1:8000:8000"
+    environment:
+      FISH_AUDIO_API_KEY_FILE: /run/ponkun-secrets/fish_audio_api_key
+    secrets:
+      - source: fish_audio_api_key
+        target: /run/compose-secrets/fish_audio_api_key
+    read_only: true
+    tmpfs:
+      - /tmp:size=16m,noexec,nosuid
+      - /run/ponkun-secrets:rw,noexec,nosuid,nodev,mode=0700,uid=65532,gid=65532
+    cap_drop: [ALL]
+    security_opt: [no-new-privileges:true]
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/healthz', timeout=3)"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+    restart: unless-stopped
+
+secrets:
+  fish_audio_api_key:
+    file: ${FISH_AUDIO_API_KEY_SECRET_FILE:?set the GUI-managed secret path}

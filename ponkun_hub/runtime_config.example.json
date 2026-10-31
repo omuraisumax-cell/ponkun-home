@@ -1,0 +1,24 @@
+{
+  "hub": {
+    "host": "127.0.0.1",
+    "port": 8787
+  },
+  "mobile": {
+    "mode": "mock",
+    "host": "127.0.0.1",
+    "port": 8002,
+    "python": "C:/path/to/mobile/python.exe",
+    "pythonpath": "C:/path/to/site-packages",
+    "log_file": "C:/path/to/ponkun_hub/logs/mobile.log"
+  },
+  "inference": {
+    "backend": "openai",
+    "hub_url": "",
+    "hub_client_token_env": "PONKUN_HUB_CLIENT_TOKEN",
+    "strata_url": "",
+    "strata_model": "qwen2.5:32b",
+    "api_key_env": "PONKUN_STRATA_API_KEY",
+    "timeout_seconds": 60,
+    "max_concurrency": 1
+  }
+}

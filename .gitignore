@@ -1,0 +1,78 @@
+# Credentials and local configuration
+.env
+.env.*
+!.env.example
+*.key
+*.pem
+*.p12
+*.pfx
+*.crt
+*.cer
+*secret*
+*credential*
+!secure_credentials.py
+!test_secure_credentials*.py
+!secure_secret_init.py
+!test_secret_runtime_permissions*.py
+
+# Python and tool caches
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+.venv/
+.venv-gpu/
+venv/
+
+# Runtime state, logs, databases, and conversations
+*.log
+logs/
+runtime_logs/
+test_runtime/
+*.db
+*.db-*
+*.sqlite
+*.sqlite3
+*conversation*
+*chat_history*
+
+# Generated audio, model weights, and caches
+*.wav
+*.mp3
+*.flac
+*.ogg
+*.gguf
+*.safetensors
+*.onnx
+*.ckpt
+.reranker_cache/
+models/
+
+# Backups, generated reports, and local experiments
+*.bak
+*.backup
+*backup*/
+backups/
+昔のファイル/
+survey_e2e_test_runtime/
+survey_pdfs/
+rag_debug.txt
+reranker_benchmark.json
+reranker_source_regression.json
+
+# Build outputs and IDE/OS metadata
+build/
+dist/
+*.exe
+.idea/
+.vscode/
+desktop.ini
+Thumbs.db
+.DS_Store
+
+# Separate upstream repository. Publish independently or as an approved submodule.
+StackChan/
+

@@ -1,0 +1,12 @@
+[project]
+name = "ponkun-home"
+version = "0.0.0"
+description = "Local-first PC and mobile assistant stack"
+readme = "README.md"
+requires-python = ">=3.12"
+dynamic = ["dependencies"]
+
+[tool.pytest.ini_options]
+testpaths = [".", "ponkun_hub", "docker/fish-speech-proxy"]
+addopts = "-ra"
+

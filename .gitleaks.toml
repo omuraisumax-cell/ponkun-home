@@ -1,0 +1,10 @@
+title = "Ponkun Home public candidate"
+
+[extend]
+useDefault = true
+
+[allowlist]
+description = "Generated local environments are never publication inputs"
+paths = [
+  '''(^|[\\/])\.venv([\\/]|$)''',
+]

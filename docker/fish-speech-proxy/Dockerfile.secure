@@ -1,0 +1,12 @@
+FROM python:3.12-slim
+
+WORKDIR /app
+COPY requirements.secure.txt /app/requirements.secure.txt
+RUN pip install --no-cache-dir -r /app/requirements.secure.txt
+COPY tts_proxy.py /app/tts_proxy.py
+COPY secure_secret_init.py /app/secure_secret_init.py
+RUN install -d -o 65532 -g 65532 -m 0700 /run/compose-secrets /run/ponkun-secrets
+
+EXPOSE 8000
+USER 65532:65532
+ENTRYPOINT ["python", "/app/secure_secret_init.py"]

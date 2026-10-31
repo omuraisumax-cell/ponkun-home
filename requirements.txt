@@ -1,0 +1,15 @@
+# Direct dependencies verified on Python 3.12 during the public-release audit.
+# Transitive dependencies remain resolver-managed; regenerate the license report
+# and rerun the offline tests whenever these pins change.
+fastapi==0.162.0
+uvicorn==0.54.0
+requests==2.34.2
+keyring==25.7.0
+openai==3.41.0
+
+# PC voice and local inference adapters
+numpy==2.5.4
+pygame==2.6.1
+sounddevice==0.5.6
+faster-whisper==1.2.1
+

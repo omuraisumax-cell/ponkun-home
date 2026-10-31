@@ -1,0 +1,12 @@
+{
+  "name": "ぽんくん",
+  "short_name": "ぽんくん",
+  "id": "/",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#131314",
+  "theme_color": "#131314",
+  "lang": "ja",
+  "description": "Ponkun HomeのパーソナルAIクライアント"
+}

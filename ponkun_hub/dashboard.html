@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#101522">
+  <title>Ponkun Hub Dashboard</title>
+  <style>
+    :root{color-scheme:dark;--bg:#080c16;--card:#121a2a;--line:#2a3954;--text:#edf3ff;--muted:#9aa9c2;--ok:#63d6a2;--ng:#ff7b86;--unknown:#f4c76d;--accent:#75c9ff}
+    *{box-sizing:border-box}body{margin:0;background:radial-gradient(circle at 10% 0%,#1a2b49,#080c16 42%);color:var(--text);font-family:system-ui,sans-serif}
+    main{width:min(1050px,100%);margin:auto;padding:20px}header{display:flex;justify-content:space-between;align-items:flex-start;gap:16px;margin-bottom:18px}h1{margin:0 0 6px;font-size:clamp(1.7rem,4vw,2.5rem)}h2{font-size:1rem;margin:0 0 12px}p{margin:0;color:var(--muted)}
+    .badge{border:1px solid var(--line);border-radius:999px;padding:7px 11px;color:var(--accent);white-space:nowrap;font-size:.82rem}.toolbar{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:16px}button{border:1px solid #3f5d7d;background:#17243a;color:var(--text);border-radius:10px;padding:10px 14px;font:inherit;cursor:pointer}button:hover{border-color:var(--accent)}
+    .grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}.card{background:linear-gradient(145deg,var(--card),#0d1422);border:1px solid var(--line);border-radius:16px;padding:17px;box-shadow:0 12px 35px #0003}.wide{grid-column:1/-1}.head{display:flex;justify-content:space-between;gap:10px;align-items:center}.state{font-weight:700;font-size:.85rem}.lamp{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:6px;background:var(--unknown)}.ok .lamp{background:var(--ok)}.ng .lamp{background:var(--ng)}.unknown .lamp{background:var(--unknown)}dl{display:grid;grid-template-columns:max-content 1fr;gap:7px 14px;margin:14px 0 0;font-size:.9rem}dt{color:var(--muted)}dd{margin:0;overflow-wrap:anywhere}a{color:var(--accent);overflow-wrap:anywhere}.muted{color:var(--muted);font-size:.84rem}.error{color:var(--ng)}
+    @media(max-width:620px){main{padding:14px}header{flex-direction:column}.grid{grid-template-columns:1fr}.wide{grid-column:auto}dl{grid-template-columns:1fr;gap:2px}dd{margin-bottom:8px}}
+  </style>
+</head>
+<body><main>
+  <header><div><h1>Ponkun Hub</h1><p>ローカル読み取り専用ダッシュボード</p></div><div class="badge">127.0.0.1 only</div></header>
+  <div class="toolbar"><button id="refresh" type="button">再読み込み</button><span id="updated" class="muted">未取得</span></div>
+  <section class="grid" id="cards"><article class="card wide"><p>状態を取得中...</p></article></section>
+  <p class="muted" style="margin-top:16px">この画面には起動・停止・再起動・認証情報変更の操作はありません。</p>
+</main>
+<script>
+const esc=(s)=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const stateLabel=(v)=>v==='ok'?'OK':v==='ng'?'NG':'Unknown';
+function link(url,label){if(!url)return '<span class="muted">未設定 / 未確認</span>';return `<a href="${esc(url)}" target="_blank" rel="noopener noreferrer">${esc(label||url)}</a>`;}
+function card(item, fields){const cls=item.status==='ok'?'ok':item.status==='ng'?'ng':'unknown';return `<article class="card ${cls}"><div class="head"><h2>${esc(item.label)}</h2><span class="state"><i class="lamp"></i>${stateLabel(item.status)}</span></div><p class="muted">${esc(item.detail||'')}</p><dl>${fields.map(([k,v])=>`<dt>${esc(k)}</dt><dd>${v}</dd>`).join('')}</dl></article>`;}
+function render(d){
+  const h=d.hub,s=d.strata,m=d.mobile,p=d.pc,t=d.tailscale;
+  document.querySelector('#cards').innerHTML=[
+    card({...h,label:'Hub'},[['状態',esc(h.detail)],['backend',esc(h.backend)],['endpoint',esc(h.endpoint||'未設定')],['model',esc(h.model||'未設定')],['auth configured',h.authentication_configured?'configured':'not configured']]),
+    card(s,[['health',link(s.url,s.url)],['応答',esc(s.detail)]]),
+    card(m,[['login',link(m.url,m.url)],['応答',esc(m.detail)]]),
+    card({...p,label:'Ponkun PC'},[['ランチャー',p.status==='ok'?esc(p.launcher):'未配置'],['起動方法','start_ponkun_pc.cmdをユーザー操作で起動']]),
+    card({...t,label:'Tailscale / Mobile URL'},[['URL',link(t.url,t.url||'')],['状態',esc(t.detail)]])
+  ].join('');
+  document.querySelector('#updated').textContent='最終更新: '+new Date().toLocaleString('ja-JP');
+}
+async function refresh(){const button=document.querySelector('#refresh');button.disabled=true;try{const r=await fetch('/api/dashboard-status',{cache:'no-store'});if(!r.ok)throw new Error('HTTP '+r.status);render(await r.json());}catch(e){document.querySelector('#cards').innerHTML=`<article class="card wide error">状態取得エラー: ${esc(e.message)}</article>`;}finally{button.disabled=false;}}
+document.querySelector('#refresh').addEventListener('click',refresh);refresh();
+</script></body></html>
