@@ -1009,6 +1009,27 @@ def home():
             box-shadow: 0 8px 18px rgba(64, 116, 255, 0.34);
         }
 
+        .thinking-row .bubble {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            color: var(--text-sub);
+        }
+
+        .thinking-spinner {
+            width: 18px;
+            height: 18px;
+            flex: 0 0 18px;
+            border: 2px solid rgba(169, 181, 200, 0.28);
+            border-top-color: var(--accent);
+            border-radius: 50%;
+            animation: thinking-spin 0.8s linear infinite;
+        }
+
+        @keyframes thinking-spin {
+            to { transform: rotate(360deg); }
+        }
+
         .image-preview-card { display: none; align-items: center; gap: 10px; margin-bottom: 8px; background: var(--panel-strong); padding: 9px 11px; border-radius: 15px; border: 1px solid var(--border); box-shadow: var(--shadow-soft); }
         .image-preview-card img { width: 46px; height: 46px; border-radius: 10px; object-fit: cover; }
         .image-preview-name { font-size: 0.8rem; color: var(--text-sub); flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
@@ -1179,7 +1200,7 @@ def home():
         </div>
 
         <div class="input-card">
-            <textarea id="message" placeholder="ぽんくんにメッセージを送る..." aria-label="メッセージ" rows="1"></textarea>
+            <textarea id="message" aria-label="メッセージ" rows="1"></textarea>
             <button class="btn-icon" type="button" onclick="document.getElementById('cameraFile').click()" title="カメラで撮影" aria-label="カメラで撮影">⌾</button>
             <button class="btn-icon" type="button" onclick="document.getElementById('voiceFile').click()" title="音声入力" aria-label="音声入力">♪</button>
             <button class="btn-icon btn-submit" type="button" onclick="sendMessage()" title="送信" aria-label="送信">➤</button>
@@ -1439,6 +1460,33 @@ let selectedImageFile = null; const savedImageInput = document.createElement("in
         scroller.scrollTo({ top: scroller.scrollHeight, behavior: "smooth" });
     }
 
+    function showThinkingIndicator() {
+        if (document.getElementById("thinkingIndicator")) return;
+        const scroller = document.getElementById("chat-scroller");
+        const welcomePanel = document.getElementById("welcomePanel");
+        if (welcomePanel) welcomePanel.remove();
+        const row = document.createElement("div");
+        row.id = "thinkingIndicator";
+        row.className = "message-row ponkun thinking-row";
+        row.setAttribute("role", "status");
+        row.setAttribute("aria-live", "polite");
+        const bubble = document.createElement("div");
+        bubble.className = "bubble";
+        const spinner = document.createElement("span");
+        spinner.className = "thinking-spinner";
+        spinner.setAttribute("aria-hidden", "true");
+        const label = document.createElement("span");
+        label.textContent = "ぽんくんが考えています...";
+        bubble.append(spinner, label);
+        row.appendChild(bubble);
+        scroller.appendChild(row);
+        scroller.scrollTo({ top: scroller.scrollHeight, behavior: "smooth" });
+    }
+
+    function hideThinkingIndicator() {
+        document.getElementById("thinkingIndicator")?.remove();
+    }
+
     function clearChat() {
         const now = new Date();
         const pad = (n) => String(n).padStart(2, "0");
@@ -1524,11 +1572,13 @@ let selectedImageFile = null; const savedImageInput = document.createElement("in
         }
     }
 
+    let messageRequestInFlight = false;
+
     async function sendMessage() {
         const input = document.getElementById("message");
         const text = input.value.trim();
 
-        if (!text && !selectedImageFile) return;
+        if ((!text && !selectedImageFile) || messageRequestInFlight) return;
 
         if (selectedImageFile) {
             const approved = window.confirm("送信先：OpenAI（外部API）\\n画像が外部へ送信され、利用料金が発生する場合があります。送信しますか？");
@@ -1543,6 +1593,8 @@ let selectedImageFile = null; const savedImageInput = document.createElement("in
 
             const previewUrl = URL.createObjectURL(fileToSend);
             appendImageMessage("user", promptText || "この写真を見て", previewUrl);
+            messageRequestInFlight = true;
+            showThinkingIndicator();
 
             const formData = new FormData();
             formData.append("image", fileToSend);
@@ -1556,6 +1608,7 @@ let selectedImageFile = null; const savedImageInput = document.createElement("in
                 const data = await res.json();
                 if (!res.ok) throw { response: data };
                 if (!res.ok) throw { response: data };
+                hideThinkingIndicator();
                 appendMessage("ponkun", data.display_text, data.route);
                 streamSpeech(data.speech_text);
                 await loadSessions();
@@ -1574,6 +1627,9 @@ let selectedImageFile = null; const savedImageInput = document.createElement("in
                     appendMessage("ponkun", "画像の解析中にエラーが発生しました。");
                 }
                 }
+            } finally {
+                hideThinkingIndicator();
+                messageRequestInFlight = false;
             }
             return;
         }
@@ -1581,6 +1637,8 @@ let selectedImageFile = null; const savedImageInput = document.createElement("in
         appendMessage("user", text);
         input.value = "";
         input.dispatchEvent(new Event("input"));
+        messageRequestInFlight = true;
+        showThinkingIndicator();
 
         try {
             const res = await authenticatedFetch("/chat", {
@@ -1590,6 +1648,7 @@ let selectedImageFile = null; const savedImageInput = document.createElement("in
             });
             const data = await res.json();
             if (!res.ok) throw { response: data };
+            hideThinkingIndicator();
             appendMessage("ponkun", data.display_text, data.route, data.sources || [], data.model_name || null);
             streamSpeech(data.speech_text);
             await loadSessions();
@@ -1604,6 +1663,9 @@ let selectedImageFile = null; const savedImageInput = document.createElement("in
                 return;
             }
             appendMessage("ponkun", "通信エラーが発生しました。");
+        } finally {
+            hideThinkingIndicator();
+            messageRequestInFlight = false;
         }
     }
 

@@ -40,7 +40,20 @@ class MobileInitializationTests(unittest.TestCase):
         self.assertIn('class="suggestion-grid"', source)
         self.assertIn('onclick="sendMessage()"', source)
         self.assertIn('savedImageInput.id = "imageFile"', source)
-        self.assertIn('placeholder="ぽんくんにメッセージを送る..."', source)
+        self.assertIn('<textarea id="message" aria-label="メッセージ"', source)
+        self.assertNotIn('placeholder="ぽんくんにメッセージを送る..."', source)
+
+    def test_mobile_ui_shows_single_transient_thinking_indicator(self):
+        source = Path(__file__).resolve().parents[1].joinpath("ponkun_mobile.py").read_text(encoding="utf-8")
+        self.assertIn('id = "thinkingIndicator"', source)
+        self.assertIn('label.textContent = "ぽんくんが考えています..."', source)
+        self.assertIn('className = "thinking-spinner"', source)
+        self.assertIn("@keyframes thinking-spin", source)
+        self.assertIn('if (document.getElementById("thinkingIndicator")) return', source)
+        self.assertIn("let messageRequestInFlight = false", source)
+        self.assertIn("messageRequestInFlight) return", source)
+        self.assertGreaterEqual(source.count("finally {"), 2)
+        self.assertGreaterEqual(source.count("hideThinkingIndicator();"), 4)
 
     def test_mobile_ui_supports_autogrow_and_local_avatar_customization(self):
         source = Path(__file__).resolve().parents[1].joinpath("ponkun_mobile.py").read_text(encoding="utf-8")
