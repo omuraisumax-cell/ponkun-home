@@ -36,6 +36,7 @@ test_runtime/
 *.db-*
 *.sqlite
 *.sqlite3
+local_news_data/
 *conversation*
 *chat_history*
 
