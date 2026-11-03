@@ -31,6 +31,9 @@ from ponkun_core import (
 from ponkun_web_search import WebSearchError
 from ponkun_inference import InferenceUnavailable
 from ponkun_openai_vision import OpenAIVisionError, analyze_image
+from ponkun_news import NewsError, refresh as refresh_news, set_limits as set_news_limits, set_state as set_news_state, set_topics as set_news_topics, snapshot as news_snapshot
+from ponkun_news_ui import PAGE as NEWS_PAGE
+from ponkun_openai_web import OpenAIWebError
 
 app = FastAPI(title="Ponkun Mobile API", version="1.0")
 VISION_BACKEND = os.environ.get("PONKUN_VISION_BACKEND", "disabled").strip().lower()
@@ -131,6 +134,20 @@ _sessions_lock = threading.RLock()
 
 class AuthRequest(BaseModel):
     token: str
+
+
+class NewsTopicsRequest(BaseModel):
+    topics: list[str]
+
+
+class NewsStateRequest(BaseModel):
+    state: str
+
+
+class NewsLimitsRequest(BaseModel):
+    daily_limit: int
+    monthly_call_limit: int
+    monthly_limit_usd: float
 
 
 def require_auth(request: Request) -> str | None:
@@ -536,6 +553,58 @@ def ask_cloud_vision(
 # =========================
 # UI 配信
 # =========================
+@app.get("/news", response_class=HTMLResponse, include_in_schema=False)
+def news_page():
+    return HTMLResponse(NEWS_PAGE, headers={"Cache-Control": "no-store"})
+
+
+@app.get("/news/api")
+def news_list(_auth: str | None = Depends(require_auth)):
+    return news_snapshot()
+
+
+@app.post("/news/api/topics")
+def news_topics(payload: NewsTopicsRequest, _auth: str | None = Depends(require_auth)):
+    try:
+        set_news_topics(payload.topics)
+        return news_snapshot()
+    except NewsError as exc:
+        raise HTTPException(status_code=400, detail="ジャンルを確認してください（最大12件・各40文字）。") from exc
+
+
+@app.post("/news/api/limits")
+def news_limits(payload: NewsLimitsRequest, _auth: str | None = Depends(require_auth)):
+    try:
+        set_news_limits(payload.daily_limit, payload.monthly_call_limit, payload.monthly_limit_usd)
+        return news_snapshot()
+    except NewsError as exc:
+        status = 409 if exc.code == "refresh_busy" else 400
+        raise HTTPException(status_code=status, detail="更新中か、上限の値が正しくありません。") from exc
+
+
+@app.post("/news/api/articles/{article_id}/state")
+def news_article_state(article_id: str, payload: NewsStateRequest, _auth: str | None = Depends(require_auth)):
+    try:
+        set_news_state(article_id, payload.state)
+    except NewsError as exc:
+        raise HTTPException(status_code=404 if exc.code == "not_found" else 400, detail="記事または状態を確認してください。") from exc
+    return {"ok": True}
+
+
+@app.post("/news/api/refresh")
+def news_refresh(_auth: str | None = Depends(require_auth)):
+    try:
+        return refresh_news()
+    except NewsError as exc:
+        status = 429 if exc.code in {"budget_exceeded", "refresh_busy"} else 503 if exc.code == "web_search_disabled" else 502
+        detail = {"budget_exceeded": "ニュース検索の回数または推定費用の上限に達しました。",
+                  "refresh_busy": "ニュース検索は実行中です。",
+                  "web_search_disabled": "Web検索が無効です。既存の検索設定を確認してください。"}.get(exc.code, "検索結果を確認できませんでした。")
+        raise HTTPException(status_code=status, detail=detail) from exc
+    except OpenAIWebError as exc:
+        raise HTTPException(status_code=502, detail="OpenAI Web検索を完了できませんでした。設定または利用状況を確認してください。") from exc
+
+
 @app.get("/", response_class=HTMLResponse)
 def home():
     return r"""<!DOCTYPE html>
@@ -1158,6 +1227,7 @@ def home():
     </div>
 
     <button class="new-chat-btn" onclick="clearChat()">＋ 新しいチャット</button>
+    <button class="new-chat-btn" type="button" onclick="location.href='/news'">📰 Ponkun News</button>
 
     <div class="section-label">最近のチャット</div>
     <ul id="historyList" class="history-list">
